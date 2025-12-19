@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical Insurance Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result, .error {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Medical Insurance Prediction</h2>
+
+    <form id="predictionForm">
+        <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" required min="0" max="120">
+        </div>
+
+        <div class="form-group">
+            <label for="bmi">BMI</label>
+            <input type="number" id="bmi" name="bmi" required min="0" step="0.1">
+        </div>
+
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender" required>
+                <option value="">-- Select Gender --</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="smoker">Smoker</label>
+            <select id="smoker" name="smoker" required>
+                <option value="">-- Select Smoker Status --</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="region">Region</label>
+            <select id="region" name="region" required>
+                <option value="">-- Select Region --</option>
+                <option value="northeast">Northeast</option>
+                <option value="northwest">Northwest</option>
+                <option value="southeast">Southeast</option>
+                <option value="southwest">Southwest</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="children">Number of Children</label>
+            <input type="number" id="children" name="children" required min="0" max="10">
+        </div>
+
+        <button type="submit">Get Prediction</button>
+    </form>
+
+    <div class="result" id="result"></div>
+    <div class="error" id="error"></div>
+</div>
+
+<script>
+    document.getElementById('predictionForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const resultDiv = document.getElementById('result');
+        const errorDiv = document.getElementById('error');
+        resultDiv.textContent = '';
+        errorDiv.textContent = '';
+
+        const formData = new FormData(e.target);
+
+        try {
+            const response = await fetch('/prediction_api', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.result) {
+                resultDiv.textContent = `Prediction: ${data.result}`;
+            } else {
+                errorDiv.textContent = 'Unexpected response format.';
+            }
+        } catch (err) {
+            console.error(err);
+            errorDiv.textContent = 'Error while getting prediction. Please try again.';
+        }
+    });
+</script>
+</body>
+</html>
